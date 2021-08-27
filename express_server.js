@@ -45,6 +45,14 @@ app.post("/urls", (req, res) => {
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
 
+// Generate random alphanumeric characters
+function generateRandomString() {
+  return Math.random().toString(16).substr(2, 6)
+    // Math.random() generates a random number
+    // toString() with a radix param of 16 (hexCode) containing numbers and letters
+    // substr() with parm 2, 6 will return a portion of the hexCode
+}
+
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });

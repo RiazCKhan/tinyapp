@@ -21,7 +21,7 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello!");
+  res.redirect(`/urls`);
 });
 
 app.get("/urls", (req, res) => {
@@ -44,26 +44,30 @@ app.get("/urls.json", (req, res) => {
   res.json(urlDatabase);
 });
 
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL]
   if (!longURL) {
     res.statusCode = 404;
     res.write("404 Page Not Found")
   } else {
-    res.redirect(longURL);
+    console.log(longURL)
+    res.redirect(`http://${longURL}`);
   }
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString()
+  console.log(req.body);  // Log the POST request body to the console
   urlDatabase[shortURL] = req.body.longURL
-  // console.log(req.body);  // Log the POST request body to the console
-  res.send("Ok");         // Respond with 'Ok' (we will replace this)
+  res.redirect(`urls/${shortURL}`)
+  console.log(urlDatabase)
 });
+
+/* 
+app.get("/hello", (req, res) => {
+  res.send("<html><body>Hello <b>World</b></body></html>\n");
+}); 
+*/
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

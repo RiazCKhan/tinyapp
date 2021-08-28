@@ -7,6 +7,14 @@ app.use(bodyParser.urlencoded({extended: true}));
 
 app.set("view engine", "ejs")
 
+// Generate random alphanumeric characters
+function generateRandomString() {
+  return Math.random().toString(16).substr(2, 6)
+    // Math.random() generates a random number
+    // toString() with a radix param of 16 (hexCode) containing numbers and letters
+    // substr() with parm 2, 6 will return a portion of the hexCode
+}
+
 const urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
   "9sm5xK": "http://www.google.com"
@@ -51,17 +59,11 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.post("/urls", (req, res) => {
-  console.log(req.body);  // Log the POST request body to the console
+  const shortURL = generateRandomString()
+  urlDatabase[shortURL] = req.body.longURL
+  // console.log(req.body);  // Log the POST request body to the console
   res.send("Ok");         // Respond with 'Ok' (we will replace this)
 });
-
-// Generate random alphanumeric characters
-function generateRandomString() {
-  return Math.random().toString(16).substr(2, 6)
-    // Math.random() generates a random number
-    // toString() with a radix param of 16 (hexCode) containing numbers and letters
-    // substr() with parm 2, 6 will return a portion of the hexCode
-}
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

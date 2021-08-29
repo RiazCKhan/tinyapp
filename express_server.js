@@ -50,17 +50,17 @@ app.get("/u/:shortURL", (req, res) => {
     res.statusCode = 404;
     res.write("404 Page Not Found")
   } else {
-    console.log(longURL)
+    // console.log(longURL)
     res.redirect(`http://${longURL}`);
   }
 });
 
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString()
-  console.log(req.body);  // Log the POST request body to the console
+  // console.log(req.body);  // Log the POST request body to the console
   urlDatabase[shortURL] = req.body.longURL
   res.redirect(`urls/${shortURL}`)
-  console.log(urlDatabase)
+  // console.log(urlDatabase)
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {

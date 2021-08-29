@@ -11,7 +11,6 @@
 </head>
 
 <body>
-
   <main style="margin: 1em;">
     <h3>My URLs</h3>
     <table class="table">
@@ -19,6 +18,9 @@
         <tr>
           <th scope="col">Short URL</th>
           <th scope="col">Long URL</th>
+
+          <th scope="col">Edit</th>
+
           <th scope="col">Delete</th>
         </tr>
       </thead>
@@ -26,17 +28,9 @@
         <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
-
-            <td><%= urls[url] %> <th scope="col">
-
-              <form method="POST" action="/urls/<%= url %>/delete">
-
-              <button type="submit" class="btn btn-outline-danger">Delete</button> 
-
-            </form>
-            
-            </th>
-            
+            <td><%= urls[url] %>
+              <th scope="col"><form method="POST" action=""><button type="submit" class="btn btn-outline-primary">Edit</button></form></th>
+              <th scope="col"><form method="POST" action="/urls/<%= url %>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form></th>
             </td>
           </tr>
         <% } %>

@@ -15,14 +15,12 @@
         <p class="card-text">Short URL: <a href="/u/<%= shortURL %>"><%= shortURL %></a></p>
       </div>
     <div class="card-footer text-muted">
-
-      <form method="POST" action="">
+      <form method="POST" action="/urls/<%= shortURL %>">
         <p style="color: grey; font-size: 26px;">Edit</p>
         <label>New URL:</label>
-        <input type="text" />
+        <input type="text" name="longURL"/>
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
-
     </div>
   </div>
   <!-- Bootstrap JS -->

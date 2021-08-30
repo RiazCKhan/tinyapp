@@ -50,13 +50,24 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  if (!longURL) {
-    res.statusCode = 404;
-    res.write("404 Page Not Found");
-  } else {
-    // console.log(longURL)
-    res.redirect(`http://${longURL}`);
+  console.log(longURL.includes('http://'));
+
+  if (!longURL.includes('http://')) {
+    let result;
+    result = 'http://' + longURL;
+    console.log(result);
+    res.redirect(result);
   }
+  if (longURL.includes('http://')) {
+    res.redirect(longURL);
+  }
+  // if (!longURL) {
+  //   res.statusCode = 404;
+  //   res.write("404 Page Not Found");
+  // } else {
+  //   // console.log(longURL)
+  //   res.redirect(`http://${longURL}`);
+  // }
 });
 
 app.post("/urls", (req, res) => {

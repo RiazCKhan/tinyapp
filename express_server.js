@@ -11,11 +11,21 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 
 // Generate random alphanumeric characters
-function generateRandomString() {
+const randomGenerator = generateRandomString => {
   return Math.random().toString(16).substr(2, 6);
-  // Math.random() generates a random number
-  // toString() with a radix param of 16 (hexCode) containing numbers and letters
-  // substr() with parm 2, 6 will return a portion of the hexCode
+}
+
+const users = {
+  'user1RandomID': {
+    id: randomGenerator(),
+    email: 'user1@example.com',
+    password: '123456'
+  },
+  'user2RandomID': {
+    id: randomGenerator(),
+    email: 'user2@example.com',
+    password: 'strong2gether!'
+  }
 }
 
 const urlDatabase = {
@@ -25,7 +35,7 @@ const urlDatabase = {
 
 
 app.get("/", (req, res) => {
-
+  res.redirect("/urls")
 });
 
 app.get("/urls.json", (req, res) => {
@@ -69,11 +79,10 @@ app.get("/register", (req, res) => {
   res.render("regLogin")  
 });
 
-
 // ---------------------------------- POST BELOW
 
 app.post("/urls", (req, res) => {
-  const shortURL = generateRandomString();
+  const shortURL = randomGenerator();
   let longURL = req.body.longURL
   // console.log(req.body);  // Log the POST request body to the console
   if (!longURL.includes('http://')) {
@@ -81,7 +90,6 @@ app.post("/urls", (req, res) => {
   }
   urlDatabase[shortURL] = longURL; // object assignment
   res.redirect(`urls/${shortURL}`);
-  // console.log(urlDatabase)
 });
 
 app.post("/urls/:shortURL", (req, res) => {

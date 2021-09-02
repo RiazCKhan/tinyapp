@@ -15,6 +15,16 @@ const randomGenerator = generateRandomString => {
   return Math.random().toString(16).substr(2, 6);
 }
 
+const getUserByEmail = (email) => {
+  for (const id in users) {
+    const user = users[id];
+    if (user.email === email) {
+      return user;
+    }
+  }
+  return null;
+};
+
 const users = { 
   "userRandomID": {
     id: "userRandomID", 
@@ -69,8 +79,7 @@ app.get("/u/:shortURL", (req, res) => {
    res.redirect(longURL)
  }
   if (!longURL) {
-     res.statusCode = 404;
-     res.write("404 Page Not Found");
+    res.sendStatus(404)
   } 
 });
 
@@ -123,6 +132,16 @@ app.post("/register", (req, res) => {
     email,
     password
   };
+
+  if (!user.email) {
+    console.log('this is a blank email', user.email)
+    return res.status(400).send('Bad Request: email required')
+   }
+   if (!user.password) {
+     console.log('this is a blank password')
+     return res.status(400).send('Bad Request: password required')
+   }
+
   users[randomID] = user
   res.cookie('user_id', randomID)
   res.redirect("/urls")

@@ -23,8 +23,9 @@ const urlDatabase = {
   "9sm5xK": "http://www.google.com"
 };
 
+
 app.get("/", (req, res) => {
-  res.redirect(`/urls`);
+
 });
 
 app.get("/urls.json", (req, res) => {
@@ -64,6 +65,13 @@ app.get("/u/:shortURL", (req, res) => {
   } 
 });
 
+app.get("/register", (req, res) => {
+  res.render("regLogin")  
+});
+
+
+// ---------------------------------- POST BELOW
+
 app.post("/urls", (req, res) => {
   const shortURL = generateRandomString();
   let longURL = req.body.longURL
@@ -94,16 +102,10 @@ app.post("/login", (req, res) => {
   res.redirect("/urls");
 });
 
-app.post("/logout", (req,res) => {
+app.post("/logout", (req, res) => {
   res.clearCookie('username');
   res.redirect("/urls");
 });
-
-/*
-app.get("/hello", (req, res) => {
-  res.send("<html><body>Hello <b>World</b></body></html>\n");
-});
-*/
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

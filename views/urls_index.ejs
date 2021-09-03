@@ -24,7 +24,7 @@
         <% for(let url in urls) { %>
           <tr>
             <td><%= url %></td>
-            <td><%= urls[url] %>
+            <td><%= urls[url].longURL %>
               <th scope="col"><form method="GET" action="/urls/<%= url %>"><button type="submit" class="btn btn-outline-primary">Edit</button></form></th>
               <th scope="col"><form method="POST" action="/urls/<%= url %>/delete"><button type="submit" class="btn btn-outline-danger">Delete</button></form></th>
             </td>

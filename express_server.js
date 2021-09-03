@@ -106,9 +106,20 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 app.post("/login", (req, res) => {
-  const username = req.body.username;
-  res.cookie('username', username);
-  res.redirect("/urls");
+  const { email, password } = req.body;
+  if (!email || !password) {
+    return res.status(403).send('Bad Request: invalid email or password');
+  };
+  for (const id in users) {
+    if (users[id].email === email) {
+      if (users[id].password === password) {
+        const userId = users[id].id
+        res.cookie('user_id', userId)
+        res.redirect("/urls");
+      } 
+    };
+  };
+
 });
 
 app.post("/logout", (req, res) => {

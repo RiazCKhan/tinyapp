@@ -1,3 +1,4 @@
+
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
@@ -43,7 +44,11 @@ app.get("/urls", (req, res) => {
 });
 
 app.get("/urls/new", (req, res) => {
-  const templateVars = { user: users[req.cookies['user_id']] };
+  const user = users[req.cookies['user_id']];
+  if (!user) {
+    res.redirect('/login');
+  }
+  const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
@@ -74,7 +79,6 @@ app.get("/login", (req, res) => {
   res.render("login", templateVars);
 });
 
-
 app.get("/register", (req, res) => {
   const templateVars = { user: req.cookies["user_id"] };
   res.render("register", templateVars);
@@ -85,11 +89,10 @@ app.get("/register", (req, res) => {
 app.post("/urls", (req, res) => {
   const shortURL = randomGenerator();
   let longURL = req.body.longURL;
-  // console.log(req.body);  // Log the POST request body to the console
   if (!longURL.includes('http://')) {
     longURL = 'http://' + longURL;
   }
-  urlDatabase[shortURL] = longURL; // object assignment
+  urlDatabase[shortURL] = longURL;
   res.redirect(`urls/${shortURL}`);
 });
 

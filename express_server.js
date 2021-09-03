@@ -108,18 +108,23 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
-    return res.status(403).send('Bad Request: invalid email or password');
+    return res.status(400).send('Bad Request: email and password required');
   };
   for (const id in users) {
     if (users[id].email === email) {
+      console.log('new email', email)
+      console.log('registered', users[id].email)
       if (users[id].password === password) {
+        console.log('new password', password)
+        console.log('registered', users[id].password)
         const userId = users[id].id
         res.cookie('user_id', userId)
         res.redirect("/urls");
-      } 
-    };
+      } else {
+        return res.status(403).send('Bad Request: incorrect email or password');
+      }
+    }
   };
-
 });
 
 app.post("/logout", (req, res) => {
@@ -147,7 +152,6 @@ app.post("/register", (req, res) => {
   res.cookie('user_id', randomID);
   res.redirect("/urls");
 });
-
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);

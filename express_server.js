@@ -9,7 +9,7 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { randomGenerator } = require('./functionAid')
+const { randomGenerator } = require('./functionAid');
 
 const users = {
   "userRandomID": {
@@ -30,7 +30,7 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.redirect("/register")
+  res.redirect("/register");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -58,30 +58,30 @@ app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   if (!longURL.includes('http://')) {
     let result;
-    result = 'http://' + longURL
-    res.redirect(result)
+    result = 'http://' + longURL;
+    res.redirect(result);
   }
   if (longURL.includes('http://')) {
-    res.redirect(longURL)
+    res.redirect(longURL);
   }
   if (!longURL) {
-    res.sendStatus(404)
+    res.sendStatus(404);
   }
 });
 
 app.get("/register", (req, res) => {
   const templateVars = { user: req.cookies["user_id"] };
-  res.render("register", templateVars)
+  res.render("register", templateVars);
 });
 
 // ---------------------------------- POST BELOW
 
 app.post("/urls", (req, res) => {
   const shortURL = randomGenerator();
-  let longURL = req.body.longURL
+  let longURL = req.body.longURL;
   // console.log(req.body);  // Log the POST request body to the console
   if (!longURL.includes('http://')) {
-    longURL = 'http://' + longURL
+    longURL = 'http://' + longURL;
   }
   urlDatabase[shortURL] = longURL; // object assignment
   res.redirect(`urls/${shortURL}`);
@@ -111,28 +111,28 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const randomID = randomGenerator()
-  const { email, password } = req.body
+  const randomID = randomGenerator();
+  const { email, password } = req.body;
+
 
   if (!email || !password) {
-    return res.status(400).send('Bad Request: invalid email or password')
+    return res.status(400).send('Bad Request: invalid email or password');
   };
 
   for (const id in users) {
     if (users[id].email === email) {
-      return res.status(400).send('Bad Request: user already exists')
+      return res.status(400).send('Bad Request: user already exists');
     }
   };
-
+  
   const user = {
     id: randomID,
     email,
     password
   };
-
-  users[randomID] = user
-  res.cookie('user_id', randomID)
-  res.redirect("/urls")
+  users[randomID] = user;
+  res.cookie('user_id', randomID);
+  res.redirect("/urls");
 });
 
 

@@ -1,4 +1,3 @@
-
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
@@ -56,10 +55,6 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
-  const user = users[req.cookies['user_id']];
-  // if (!user) {
-  //   res.redirect('/urls');
-  // }
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
   const templateVars = { shortURL, longURL, user: users[req.cookies['user_id']] };
@@ -68,16 +63,10 @@ app.get("/urls/:shortURL", (req, res) => {
 
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
-  if (!longURL.includes('http://')) {
-    let result;
-    result = 'http://' + longURL;
-    res.redirect(result);
-  }
-  if (longURL.includes('http://')) {
-    res.redirect(longURL);
-  }
   if (!longURL) {
-    res.sendStatus(404);
+    return res.sendStatus(404);
+  } else {
+    return res.redirect(longURL['longURL']);
   }
 });
 
@@ -97,23 +86,23 @@ app.post("/urls", (req, res) => {
   const shortURL = randomGenerator();
   let longURL = req.body.longURL;
   if (!longURL.includes('http://')) {
-    longURL = 'http://' + longURL;
+    longURL = 'https://' + longURL;
   }
   urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
-  res.redirect(`urls/${shortURL}`);
+  return res.redirect(`urls/${shortURL}`);
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
   urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
   delete urlDatabase[shortURL];
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.post("/login", (req, res) => {
@@ -126,7 +115,7 @@ app.post("/login", (req, res) => {
       if (users[id].password === password) {
         const userId = users[id].id;
         res.cookie('user_id', userId);
-        res.redirect("/urls");
+        return res.redirect("/urls");
       } else {
         return res.status(403).send('Bad Request: incorrect email or password');
       }
@@ -136,7 +125,7 @@ app.post("/login", (req, res) => {
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.post("/register", (req, res) => {
@@ -157,7 +146,7 @@ app.post("/register", (req, res) => {
   };
   users[randomID] = user;
   res.cookie('user_id', randomID);
-  res.redirect("/urls");
+  return res.redirect("/urls");
 });
 
 app.listen(PORT, () => {

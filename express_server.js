@@ -39,6 +39,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
+// const obj1 = req.cookies;
+// const userId = obj1['user_id']
+// const userObj = users[userId]
+
   const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
   res.render("urls_index", templateVars);
 });
@@ -92,13 +96,14 @@ app.post("/urls", (req, res) => {
   if (!longURL.includes('http://')) {
     longURL = 'http://' + longURL;
   }
-  urlDatabase[shortURL] = longURL;
+  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id }; 
   res.redirect(`urls/${shortURL}`);
 });
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
-  urlDatabase[shortURL] = req.body.longURL;
+  const longURL = req.body.longURL;
+  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
   res.redirect("/urls");
 });
 

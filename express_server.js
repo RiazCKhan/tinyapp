@@ -39,10 +39,9 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-// const obj1 = req.cookies;
-// const userId = obj1['user_id']
-// const userObj = users[userId]
-
+  // const obj1 = req.cookies;
+  // const userId = obj1['user_id']
+  // const userObj = users[userId]
   const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
   res.render("urls_index", templateVars);
 });
@@ -50,13 +49,17 @@ app.get("/urls", (req, res) => {
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies['user_id']];
   if (!user) {
-    res.redirect('/login');
+    return res.redirect('/login');
   }
   const templateVars = { user };
   res.render("urls_new", templateVars);
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const user = users[req.cookies['user_id']];
+  // if (!user) {
+  //   res.redirect('/urls');
+  // }
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
   const templateVars = { shortURL, longURL, user: users[req.cookies['user_id']] };
@@ -96,7 +99,7 @@ app.post("/urls", (req, res) => {
   if (!longURL.includes('http://')) {
     longURL = 'http://' + longURL;
   }
-  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id }; 
+  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
   res.redirect(`urls/${shortURL}`);
 });
 

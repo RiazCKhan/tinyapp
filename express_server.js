@@ -30,7 +30,7 @@ const urlDatabase = {
 };
 
 app.get("/", (req, res) => {
-  res.redirect("/register");
+  res.send('Nada');
 });
 
 app.get("/urls.json", (req, res) => {
@@ -68,6 +68,12 @@ app.get("/u/:shortURL", (req, res) => {
     res.sendStatus(404);
   }
 });
+
+app.get("/login", (req, res) => {
+  const templateVars = { user: req.cookies["user_id"] };
+  res.render("login", templateVars)
+});
+
 
 app.get("/register", (req, res) => {
   const templateVars = { user: req.cookies["user_id"] };
@@ -113,18 +119,14 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const randomID = randomGenerator();
   const { email, password } = req.body;
-
-
   if (!email || !password) {
     return res.status(400).send('Bad Request: invalid email or password');
   };
-
   for (const id in users) {
     if (users[id].email === email) {
       return res.status(400).send('Bad Request: user already exists');
-    }
+    };
   };
-  
   const user = {
     id: randomID,
     email,

@@ -71,7 +71,7 @@ app.get("/u/:shortURL", (req, res) => {
 
 app.get("/login", (req, res) => {
   const templateVars = { user: req.cookies["user_id"] };
-  res.render("login", templateVars)
+  res.render("login", templateVars);
 });
 
 
@@ -109,22 +109,18 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
-  };
+  }
   for (const id in users) {
     if (users[id].email === email) {
-      console.log('new email', email)
-      console.log('registered', users[id].email)
       if (users[id].password === password) {
-        console.log('new password', password)
-        console.log('registered', users[id].password)
-        const userId = users[id].id
-        res.cookie('user_id', userId)
+        const userId = users[id].id;
+        res.cookie('user_id', userId);
         res.redirect("/urls");
       } else {
         return res.status(403).send('Bad Request: incorrect email or password');
       }
     }
-  };
+  }
 });
 
 app.post("/logout", (req, res) => {
@@ -137,12 +133,12 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Bad Request: invalid email or password');
-  };
+  }
   for (const id in users) {
     if (users[id].email === email) {
       return res.status(400).send('Bad Request: user already exists');
-    };
-  };
+    }
+  }
   const user = {
     id: randomID,
     email,

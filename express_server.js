@@ -1,39 +1,25 @@
 const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
+app.set("view engine", "ejs");
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 const bodyParser = require("body-parser");
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 
-app.set("view engine", "ejs");
+const { randomGenerator } = require('./functionAid')
 
-// Generate random alphanumeric characters
-const randomGenerator = generateRandomString => {
-  return Math.random().toString(16).substr(2, 6);
-}
-
-const getUserByEmail = (email) => {
-  for (const id in users) {
-    const user = users[id];
-    if (user.email === email) {
-      return user;
-    }
-  }
-  return null;
-};
-
-const users = { 
+const users = {
   "userRandomID": {
-    id: "userRandomID", 
-    email: "user@example.com", 
-    password: "purple-monkey-dinosaur"
+    id: "userRandomID",
+    email: "user@example.com",
+    password: "123"
   },
- "user2RandomID": {
-    id: "user2RandomID", 
-    email: "user2@example.com", 
+  "user2RandomID": {
+    id: "user2RandomID",
+    email: "user2@example.com",
     password: "dishwasher-funk"
   }
 };
@@ -71,16 +57,16 @@ app.get("/urls/:shortURL", (req, res) => {
 app.get("/u/:shortURL", (req, res) => {
   const longURL = urlDatabase[req.params.shortURL];
   if (!longURL.includes('http://')) {
-   let result;  
-   result = 'http://' + longURL
-   res.redirect(result)
- }
+    let result;
+    result = 'http://' + longURL
+    res.redirect(result)
+  }
   if (longURL.includes('http://')) {
-   res.redirect(longURL)
- }
+    res.redirect(longURL)
+  }
   if (!longURL) {
     res.sendStatus(404)
-  } 
+  }
 });
 
 app.get("/register", (req, res) => {
@@ -125,22 +111,24 @@ app.post("/logout", (req, res) => {
 });
 
 app.post("/register", (req, res) => {
-  const randomID = randomGenerator() 
+  const randomID = randomGenerator()
   const { email, password } = req.body
-  const user = { 
+
+  if (!email || !password) {
+    return res.status(400).send('Bad Request: invalid email or password')
+  };
+
+  for (const id in users) {
+    if (users[id].email === email) {
+      return res.status(400).send('Bad Request: user already exists')
+    }
+  };
+
+  const user = {
     id: randomID,
     email,
     password
   };
-
-  if (!user.email) {
-    console.log('this is a blank email', user.email)
-    return res.status(400).send('Bad Request: email required')
-   }
-   if (!user.password) {
-     console.log('this is a blank password')
-     return res.status(400).send('Bad Request: password required')
-   }
 
   users[randomID] = user
   res.cookie('user_id', randomID)

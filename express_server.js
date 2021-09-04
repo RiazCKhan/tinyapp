@@ -9,7 +9,7 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { randomGenerator } = require('./functionAid');
+const { randomGenerator, urlsForUser } = require('./functionAid');
 
 const users = {
   "userRandomID": {
@@ -29,8 +29,8 @@ const urlDatabase = {
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
-app.get("/", (req, res) => { 
-  return res.redirect("urls");
+app.get("/", (req, res) => {
+  return res.redirect("/urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -38,8 +38,10 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  const user = users[req.cookies['user_id']]
-  const templateVars = { urls: urlDatabase, user };
+  const user = req.cookies['user_id']; // Logged in user
+  const userEmail = users[req.cookies['user_id']];
+  const urlsBelongingToUser = urlsForUser(user);
+  const templateVars = { urls: urlsBelongingToUser, user: userEmail };
   res.render("urls_index", templateVars);
 });
 
@@ -78,30 +80,38 @@ app.get("/register", (req, res) => {
   res.render("register", templateVars);
 });
 
-// ---------------------------------- POST BELOW
+// -------------------- POST BELOW -------------------- \\
 
 app.post("/urls", (req, res) => {
+  const userID = users[req.cookies['user_id']].id;
   const shortURL = randomGenerator();
   let longURL = req.body.longURL;
-  if (!longURL.includes('http://')) {
+  if (!longURL.includes('https://')) {
     longURL = 'https://' + longURL;
   }
-  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
+  urlDatabase[shortURL] = { longURL, userID };
   return res.redirect(`urls/${shortURL}`);
 });
+
+// -------------------WORKING AREA BELOW
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
+  //CHECK FOR PERMISSIONS
   urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
   return res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
+  //check for permissions
   delete urlDatabase[shortURL];
   return res.redirect("/urls");
 });
+
+
+// -------------------WORKING AREA ABOVE
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -111,12 +121,12 @@ app.post("/login", (req, res) => {
   for (const id in users) {
     if (users[id].email === email) {
       if (users[id].password === password) {
-        const userId = users[id].id;
-        res.cookie('user_id', userId);
+        const userID = users[id].id;
+        res.cookie('user_id', userID);
         return res.redirect("/urls");
-      } else {
-        return res.status(403).send('Bad Request: incorrect email or password');
       }
+    } else {
+      return res.status(403).send('Bad Request: incorrect email or password');
     }
   }
 });
@@ -150,3 +160,5 @@ app.post("/register", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+module.exports = { urlDatabase, users };

@@ -25,7 +25,7 @@ const users = {
 };
 
 const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.tsn.ca", userID: "aJ48lW" },
+  b6UTxQ: { longURL: "https://www.lighthouselabs.ca", userID: "aJ48lW" },
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
@@ -38,10 +38,8 @@ app.get("/urls.json", (req, res) => {
 });
 
 app.get("/urls", (req, res) => {
-  // const obj1 = req.cookies;
-  // const userId = obj1['user_id']
-  // const userObj = users[userId]
-  const templateVars = { urls: urlDatabase, user: users[req.cookies['user_id']] };
+  const user = users[req.cookies['user_id']]
+  const templateVars = { urls: urlDatabase, user /* user: users[req.cookies['user_id']] */ };
   res.render("urls_index", templateVars);
 });
 

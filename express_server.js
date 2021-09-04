@@ -29,8 +29,8 @@ const urlDatabase = {
   i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
 };
 
-app.get("/", (req, res) => {
-  res.send('Nada');
+app.get("/", (req, res) => { 
+  return res.redirect("urls");
 });
 
 app.get("/urls.json", (req, res) => {
@@ -39,14 +39,14 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const user = users[req.cookies['user_id']]
-  const templateVars = { urls: urlDatabase, user /* user: users[req.cookies['user_id']] */ };
+  const templateVars = { urls: urlDatabase, user };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
   const user = users[req.cookies['user_id']];
   if (!user) {
-    return res.redirect('/login');
+    return res.redirect("/login");
   }
   const templateVars = { user };
   res.render("urls_new", templateVars);

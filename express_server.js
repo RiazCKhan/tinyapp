@@ -9,7 +9,17 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { randomGenerator, urlsForUser } = require('./functionAid');
+const { randomGenerator } = require('./functionAid');
+
+const urlsForUser = function (user_id) {
+  const uniqueUserUrls = {};
+  for (url in urlDatabase) {
+    if (user_id === urlDatabase[url].userID) {
+      uniqueUserUrls[url] = urlDatabase[url];
+    }
+  }
+  return uniqueUserUrls;
+}
 
 const users = {
   "userRandomID": {
@@ -93,24 +103,27 @@ app.post("/urls", (req, res) => {
   return res.redirect(`urls/${shortURL}`);
 });
 
-// -------------------WORKING AREA BELOW
 
 app.post("/urls/:shortURL", (req, res) => {
   const shortURL = req.params.shortURL;
   const longURL = req.body.longURL;
-  //CHECK FOR PERMISSIONS
-  urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
+  const user = req.cookies['user_id'];
+  if (urlsForUser(user)) {
+    urlDatabase[shortURL] = { longURL, userID: users[req.cookies['user_id']].id };
+  }
   return res.redirect("/urls");
 });
 
 app.post("/urls/:shortURL/delete", (req, res) => {
   const shortURL = req.params.shortURL;
-  //check for permissions
-  delete urlDatabase[shortURL];
+  const user = req.cookies['user_id'];
+  if (urlsForUser(user)) {
+    delete urlDatabase[shortURL];
+  }
   return res.redirect("/urls");
 });
 
-
+// -------------------WORKING AREA BELOW
 // -------------------WORKING AREA ABOVE
 
 app.post("/login", (req, res) => {
@@ -160,5 +173,3 @@ app.post("/register", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-module.exports = { urlDatabase, users };

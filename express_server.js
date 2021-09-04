@@ -3,6 +3,9 @@ const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
 
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
@@ -152,6 +155,7 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const randomID = randomGenerator();
   const { email, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, saltRounds)
   if (!email || !password) {
     return res.status(400).send('Bad Request: invalid email or password');
   }
@@ -163,7 +167,7 @@ app.post("/register", (req, res) => {
   const user = {
     id: randomID,
     email,
-    password
+    password: hashedPassword
   };
   users[randomID] = user;
   res.cookie('user_id', randomID);

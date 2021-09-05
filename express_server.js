@@ -127,25 +127,26 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 // -------------------WORKING AREA BELOW
-// -------------------WORKING AREA ABOVE
+
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-  for (const id in users) {
+  for (const id in users) { // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
     if (users[id].email === email) {
-      if (users[id].password === password) {
+      if (bcrypt.compareSync(password, users[id].password)) {
         const userID = users[id].id;
         res.cookie('user_id', userID);
         return res.redirect("/urls");
       }
-    } else {
-      return res.status(403).send('Bad Request: incorrect email or password');
     }
   }
+  return res.status(403).send('Bad Request: incorrect email or password');
 });
+
+// -------------------WORKING AREA ABOVE
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');
@@ -155,15 +156,15 @@ app.post("/logout", (req, res) => {
 app.post("/register", (req, res) => {
   const randomID = randomGenerator();
   const { email, password } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, saltRounds)
   if (!email || !password) {
-    return res.status(400).send('Bad Request: invalid email or password');
+    return res.status(400).send('Bad Request: email and password required');
   }
-  for (const id in users) {
+  for (const id in users) { // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
     if (users[id].email === email) {
-      return res.status(400).send('Bad Request: user already exists');
+      return res.status(400).send('Bad Request: Hmmmm... Try again');
     }
   }
+  const hashedPassword = bcrypt.hashSync(password, saltRounds);
   const user = {
     id: randomID,
     email,

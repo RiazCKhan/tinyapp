@@ -6,6 +6,12 @@ app.set("view engine", "ejs");
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 
+var cookieSession = require('cookie-session')
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}))
+
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
@@ -127,7 +133,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
 });
 
 // -------------------WORKING AREA BELOW
-
+// -------------------WORKING AREA ABOVE
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -145,8 +151,6 @@ app.post("/login", (req, res) => {
   }
   return res.status(403).send('Bad Request: incorrect email or password');
 });
-
-// -------------------WORKING AREA ABOVE
 
 app.post("/logout", (req, res) => {
   res.clearCookie('user_id');

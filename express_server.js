@@ -33,14 +33,14 @@ app.get("/urls.json", (req, res) => {
 
 app.get("/urls", (req, res) => {
   const user = req.session['user_id'];
-  const userEmail = users[req.session['user_id']]; 
+  const userEmail = users[req.session['user_id']];
   const urlsBelongingToUser = urlsForUser(user);
   const templateVars = { urls: urlsBelongingToUser, user: userEmail };
   res.render("urls_index", templateVars);
 });
 
 app.get("/urls/new", (req, res) => {
-  const user = users[req.session['user_id']]; 
+  const user = users[req.session['user_id']];
   if (!user) {
     return res.redirect("/login");
   }
@@ -65,12 +65,12 @@ app.get("/u/:shortURL", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const templateVars = { user: req.session["user_id"] }; 
+  const templateVars = { user: req.session["user_id"] };
   res.render("login", templateVars);
 });
 
 app.get("/register", (req, res) => {
-  const templateVars = { user: req.session["user_id"] }; 
+  const templateVars = { user: req.session["user_id"] };
   res.render("register", templateVars);
 });
 
@@ -93,7 +93,7 @@ app.post("/urls/:shortURL", (req, res) => {
   if (!longURL.includes('https://')) {
     longURL = 'https://' + longURL;
   }
-  const user = req.session['user_id']; 
+  const user = req.session['user_id'];
   if (urlsForUser(user)) {
     urlDatabase[shortURL] = { longURL, userID: users[req.session['user_id']].id };
   }
@@ -114,26 +114,16 @@ app.post("/login", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-  // -------------------WORKING AREA BELOW
   // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
-
   for (const id in users) {  // loop through each user
-
-  if (users[id].email === email) { // if users email matches
-
-    if (bcrypt.compareSync(password, users[id].password)) { // hash password
-
-      const userID = users[id].id; 
-
-      req.session['user_id'] = userID 
-
-      return res.redirect("/urls");
+    if (users[id].email === email) { // check users email matches
+      if (bcrypt.compareSync(password, users[id].password)) { // check hash password
+        const userID = users[id].id;
+        req.session['user_id'] = userID
+        return res.redirect("/urls");
+      }
     }
-  }
-};
-
-// -------------------WORKING AREA ABOVE
-
+  };
   return res.status(403).send('Bad Request: incorrect email or password');
 });
 
@@ -147,23 +137,10 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-
- // -------------------WORKING AREA BELOW
- // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
-
-const existingUser = getUserWithEmail(email, users)
-if (existingUser) {
-  return res.status(400).send('Bad Request: Hmmmm... Try again');
-}
-// when registering if an email is being used you cannot register
-//  for (const id in users) {  // loops through existing user IDs
-//     if (users[id].email === email) { // checking emails
-//       return res.status(400).send('Bad Request: Hmmmm... Try again');
-//     }
-//   }
-
-  // -------------------WORKING AREA ABOVE
-
+  const existingUser = getUserWithEmail(email, users)
+  if (existingUser) {
+    return res.status(400).send('Bad Request: Hmmmm... Try again');
+  }
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
   const randomID = randomGenerator();
   const user = {
@@ -179,3 +156,6 @@ if (existingUser) {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
+
+  // -------------------WORKING AREA BELOW
+  // -------------------WORKING AREA ABOVE

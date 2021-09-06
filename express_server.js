@@ -18,7 +18,7 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { randomGenerator } = require('./functionAid');
+const { randomGenerator } = require("./functionAid");
 
 const urlsForUser = function (user_id) {
   const uniqueUserUrls = {};

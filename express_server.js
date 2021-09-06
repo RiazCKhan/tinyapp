@@ -13,7 +13,7 @@ const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
-const { urlDatabase, users, randomGenerator, urlsForUser, getUserWithEmail } = require("./helpers");
+const { urlDatabase, users, randomGenerator, urlsForUser, getUserByEmail } = require("./helpers");
 
 app.get("/", (req, res) => {
   return res.redirect("/urls");
@@ -53,7 +53,7 @@ app.get("/u/:shortURL", (req, res) => {
     return res.sendStatus(404);
   } else {
     return res.redirect(longURL['longURL']);
-  }
+  };
 });
 
 app.get("/login", (req, res) => {
@@ -74,7 +74,7 @@ app.post("/urls", (req, res) => {
   let longURL = req.body.longURL;
   if (!longURL.includes('https://')) {
     longURL = 'https://' + longURL;
-  }
+  };
   urlDatabase[shortURL] = { longURL, userID };
   return res.redirect(`urls/${shortURL}`);
 });
@@ -84,11 +84,11 @@ app.post("/urls/:shortURL", (req, res) => {
   let longURL = req.body.longURL;
   if (!longURL.includes('https://')) {
     longURL = 'https://' + longURL;
-  }
+  };
   const user = req.session['user_id'];
   if (urlsForUser(user)) {
     urlDatabase[shortURL] = { longURL, userID: users[req.session['user_id']].id };
-  }
+  };
   return res.redirect("/urls");
 });
 
@@ -97,7 +97,7 @@ app.post("/urls/:shortURL/delete", (req, res) => {
   const user = req.session['user_id'];
   if (urlsForUser(user)) {
     delete urlDatabase[shortURL];
-  }
+  };
   return res.redirect("/urls");
 });
 
@@ -105,9 +105,7 @@ app.post("/login", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
-  }
-  // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
-  // Password verification function
+  };
   for (const id in users) {  // loop through each user
     if (users[id].email === email) { // check: users email matches
       if (bcrypt.compareSync(password, users[id].password)) { // check: bcrypt hash password
@@ -116,7 +114,7 @@ app.post("/login", (req, res) => {
         return res.redirect("/urls");
       }
     }
-  }
+  };
   return res.status(403).send('Bad Request: incorrect email or password');
 });
 
@@ -129,11 +127,11 @@ app.post("/register", (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
-  }
-  const existingUser = getUserWithEmail(email, users);
+  };
+  const existingUser = getUserByEmail(email, users);
   if (existingUser) {
     return res.status(400).send('Bad Request: Hmmmm... Try again');
-  }
+  };
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
   const randomID = randomGenerator();
   const user = {
@@ -149,6 +147,3 @@ app.post("/register", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// -------------------WORKING AREA BELOW
-// -------------------WORKING AREA ABOVE

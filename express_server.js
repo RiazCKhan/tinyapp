@@ -2,26 +2,18 @@ const express = require("express");
 const app = express();
 const PORT = 8080; // default port 8080
 app.set("view engine", "ejs");
-
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
-
-const cookieSession = require('cookie-session')
+const cookieSession = require('cookie-session');
 app.use(cookieSession({
   name: 'session',
   keys: ['key1', 'key2']
-}))
-
+}));
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
-
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
-
 const { urlDatabase, users, randomGenerator, urlsForUser, getUserWithEmail } = require("./helpers");
-
-// FUNCTION [moved to helper/index]
-// User & URL 'Database' [helper/index]
 
 app.get("/", (req, res) => {
   return res.redirect("/urls");
@@ -115,15 +107,16 @@ app.post("/login", (req, res) => {
     return res.status(400).send('Bad Request: email and password required');
   }
   // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
+  // Password verification function
   for (const id in users) {  // loop through each user
-    if (users[id].email === email) { // check users email matches
-      if (bcrypt.compareSync(password, users[id].password)) { // check hash password
-        const userID = users[id].id;
-        req.session['user_id'] = userID
+    if (users[id].email === email) { // check: users email matches
+      if (bcrypt.compareSync(password, users[id].password)) { // check: bcrypt hash password
+        const userID = users[id].id; // identify: user_id
+        req.session['user_id'] = userID; // set: session user_id to userID serverside
         return res.redirect("/urls");
       }
     }
-  };
+  }
   return res.status(403).send('Bad Request: incorrect email or password');
 });
 
@@ -137,7 +130,7 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-  const existingUser = getUserWithEmail(email, users)
+  const existingUser = getUserWithEmail(email, users);
   if (existingUser) {
     return res.status(400).send('Bad Request: Hmmmm... Try again');
   }
@@ -149,7 +142,7 @@ app.post("/register", (req, res) => {
     password: hashedPassword
   };
   users[randomID] = user;
-  req.session['user_id'] = randomID
+  req.session['user_id'] = randomID;
   return res.redirect("/urls");
 });
 
@@ -157,5 +150,5 @@ app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
 
-  // -------------------WORKING AREA BELOW
-  // -------------------WORKING AREA ABOVE
+// -------------------WORKING AREA BELOW
+// -------------------WORKING AREA ABOVE

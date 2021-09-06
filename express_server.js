@@ -167,12 +167,12 @@ app.post("/register", (req, res) => {
     }
   }
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
+  const randomID = randomGenerator();
   const user = {
     id: randomID,
     email,
     password: hashedPassword
   };
-  const randomID = randomGenerator();
   users[randomID] = user;
   req.session['user_id'] = randomID
   return res.redirect("/urls");

@@ -18,35 +18,10 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { randomGenerator } = require("./helpers");
+const { urlDatabase, users, randomGenerator, urlsForUser } = require("./helpers");
 
-const urlsForUser = function (user_id) {
-  const uniqueUserUrls = {};
-  for (url in urlDatabase) {
-    if (user_id === urlDatabase[url].userID) {
-      uniqueUserUrls[url] = urlDatabase[url];
-    }
-  }
-  return uniqueUserUrls;
-}
-
-const users = {
-  "userRandomID": {
-    id: "userRandomID",
-    email: "user@example.com",
-    password: "123"
-  },
-  "user2RandomID": {
-    id: "user2RandomID",
-    email: "user2@example.com",
-    password: "dishwasher-funk"
-  }
-};
-
-const urlDatabase = {
-  b6UTxQ: { longURL: "https://www.lighthouselabs.ca", userID: "aJ48lW" },
-  i3BoGr: { longURL: "https://www.google.ca", userID: "aJ48lW" }
-};
+// FUNCTION
+// User & URL 'Database'
 
 app.get("/", (req, res) => {
   return res.redirect("/urls");

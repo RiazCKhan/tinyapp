@@ -20,8 +20,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 const { urlDatabase, users, randomGenerator, urlsForUser } = require("./helpers");
 
-// FUNCTION
-// User & URL 'Database'
+// FUNCTION [moved to helper/index]
+// User & URL 'Database' [helper/index]
 
 app.get("/", (req, res) => {
   return res.redirect("/urls");
@@ -114,15 +114,26 @@ app.post("/login", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-  for (const id in users) { // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
-    if (users[id].email === email) {
-      if (bcrypt.compareSync(password, users[id].password)) {
-        const userID = users[id].id;
-        req.session['user_id'] = userID 
-        return res.redirect("/urls");
-      }
+  // -------------------WORKING AREA BELOW
+  // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
+
+  for (const id in users) {  // loop through each user
+
+  if (users[id].email === email) { // if users email matches
+
+    if (bcrypt.compareSync(password, users[id].password)) { // hash password
+
+      const userID = users[id].id; 
+
+      req.session['user_id'] = userID 
+
+      return res.redirect("/urls");
     }
   }
+};
+
+// -------------------WORKING AREA ABOVE
+
   return res.status(403).send('Bad Request: incorrect email or password');
 });
 
@@ -136,11 +147,21 @@ app.post("/register", (req, res) => {
   if (!email || !password) {
     return res.status(400).send('Bad Request: email and password required');
   }
-  for (const id in users) { // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
+
+ // -------------------WORKING AREA BELOW
+ // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
+ 
+ 
+ for (const id in users) { 
+
     if (users[id].email === email) {
       return res.status(400).send('Bad Request: Hmmmm... Try again');
     }
   }
+
+
+  // -------------------WORKING AREA ABOVE
+
   const hashedPassword = bcrypt.hashSync(password, saltRounds);
   const randomID = randomGenerator();
   const user = {
@@ -156,6 +177,3 @@ app.post("/register", (req, res) => {
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}!`);
 });
-
-// -------------------WORKING AREA BELOW
-// -------------------WORKING AREA ABOVE

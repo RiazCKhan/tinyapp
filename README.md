@@ -8,8 +8,8 @@ TinyApp is a full stack web application built with Node and Express that allows 
 #### New User & Existing User Pages
 ##### To access all of the feature of the TinyApp Project users will need to register or login. Only Registered Users are able to access, edit, and delete their uniquely created list of URLs. Happy browsing :)
 
-![urls-page1](./docs/urls-page1.png)
 ![urls-page2](./docs/urls-page2.png)
+![urls-page1](./docs/urls-page1.png)
 ![edit-feature](./docs/edit-feature.png)
 ![edit-shortURL](./docs/edit-shortURL.png)
 ![Register](./docs/register-page.png)

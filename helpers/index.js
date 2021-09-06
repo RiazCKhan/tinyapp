@@ -37,9 +37,7 @@ const urlsForUser = function(user_id) {
 
 const getUserByEmail = (email, users) => {
   for (let id in users) {
-    console.log(users[id]);
     if (users[id].email === email) {
-      console.log('matching user with email', users[id]);
       return users[id].id;
     }
   }

@@ -1,5 +1,3 @@
-const bcrypt = require('bcrypt');
-
 // ------ User & URL "Database" ------ \\
 const users = {
   "userRandomID": {
@@ -24,10 +22,10 @@ const urlDatabase = {
 // Generate random alphanumeric characters
 const randomGenerator = generateRandomString => {
   return Math.random().toString(16).substr(2, 6);
-}
+};
 
 // URLs displayed for unique user
-const urlsForUser = function (user_id) {
+const urlsForUser = function(user_id) {
   const uniqueUserUrls = {};
   for (url in urlDatabase) {
     if (user_id === urlDatabase[url].userID) {
@@ -35,16 +33,18 @@ const urlsForUser = function (user_id) {
     }
   }
   return uniqueUserUrls;
-}
+};
 
-const getUserWithEmail = (email, users) => {
+const getUserByEmail = (email, users) => {
   for (let id in users) {
-    if(users[id].email === email) {
-      return users[id]
+    console.log(users[id]);
+    if (users[id].email === email) {
+      console.log('matching user with email', users[id]);
+      return users[id].id;
     }
   }
-  return null
-}
+  return null;
+};
 
 
-module.exports = { urlDatabase, users, randomGenerator, urlsForUser, getUserWithEmail }
+module.exports = { urlDatabase, users, randomGenerator, urlsForUser, getUserByEmail };

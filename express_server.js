@@ -18,7 +18,7 @@ app.use(cookieParser());
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({ extended: true }));
 
-const { urlDatabase, users, randomGenerator, urlsForUser } = require("./helpers");
+const { urlDatabase, users, randomGenerator, urlsForUser, getUserWithEmail } = require("./helpers");
 
 // FUNCTION [moved to helper/index]
 // User & URL 'Database' [helper/index]
@@ -150,15 +150,17 @@ app.post("/register", (req, res) => {
 
  // -------------------WORKING AREA BELOW
  // -------- REFACTOR HELPER FUNCTION REQUIRED -------- \\
- 
- 
- for (const id in users) { 
 
-    if (users[id].email === email) {
-      return res.status(400).send('Bad Request: Hmmmm... Try again');
-    }
-  }
-
+const existingUser = getUserWithEmail(email, users)
+if (existingUser) {
+  return res.status(400).send('Bad Request: Hmmmm... Try again');
+}
+// when registering if an email is being used you cannot register
+//  for (const id in users) {  // loops through existing user IDs
+//     if (users[id].email === email) { // checking emails
+//       return res.status(400).send('Bad Request: Hmmmm... Try again');
+//     }
+//   }
 
   // -------------------WORKING AREA ABOVE
 

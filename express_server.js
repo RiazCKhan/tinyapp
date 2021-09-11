@@ -41,8 +41,15 @@ app.get("/urls/new", (req, res) => {
 });
 
 app.get("/urls/:shortURL", (req, res) => {
+  const user = users[req.session['user_id']];
+  if (!user) {
+    return res.redirect("/urls/new");
+  }
   const shortURL = req.params.shortURL;
   const longURL = urlDatabase[shortURL];
+  if (user.id !== longURL.userID) { 
+    return res.redirect("/urls/new");
+  }
   const templateVars = { shortURL, longURL, user: users[req.session['user_id']] };
   res.render("urls_show", templateVars);
 });
